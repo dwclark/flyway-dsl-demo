@@ -1,0 +1,41 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath group: 'com.github.dwclark', name: 'flyway-dsl', version: '1.0.0'
+        classpath group: 'com.github.dwclark', name: 'db-reset', version: '1.0.0'
+    }
+}
+
+apply plugin: 'flyway-dsl'
+apply plugin: 'db-reset'
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+def jdbcDriver = 'postgresql:postgresql:9.1-901.jdbc4'
+def dbProperties = new Properties();
+file('db.properties').withReader { reader -> dbProperties.load(reader); }
+
+dependencies {
+    dbReset jdbcDriver
+    compile jdbcDriver
+    compile 'com.github.dwclark:flyway-dsl:1.0.0'
+}
+
+resetPostgresqlConfig {
+    url = 'jdbc:postgresql:ciuserdemo'
+    connectionProperties = [ user: dbProperties.user, password: dbProperties.password ];
+    source = 'ciuserdemo'
+    target = 'ciuserdemocopy'
+}
+
+migrations {
+    environments = [ 'dev', 'qa', 'uat', 'prod' ]
+    stages = [ 'pre', 'release', 'post' ]
+}
