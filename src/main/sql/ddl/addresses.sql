@@ -5,6 +5,7 @@ create table addresses (
        created_date timestamp not null default(now()),
        name varchar(200) not null,
        street1 varchar(100) not null,
+       street2 varchar(100) not null,
        city varchar(100) not null,
        state varchar(2) not null,
        zip_code varchar(10) not null
